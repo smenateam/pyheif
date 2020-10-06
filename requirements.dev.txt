@@ -23,7 +23,7 @@ py==1.9.0                 # via pytest
 pyparsing==2.4.7          # via packaging
 pytest==4.6.11            # via -r requirements.dev.in
 scandir==1.10.0           # via pathlib2
-six==1.15.0               # via more-itertools, packaging, pathlib2, pip-tools, pytest
+six==1.15.0               # via -r requirements.dev.in, more-itertools, packaging, pathlib2, pip-tools, pytest
 wcwidth==0.2.5            # via pytest
 zipp==1.2.0               # via importlib-metadata
 
