@@ -1,5 +1,3 @@
-import os
-
 from cffi import FFI
 
 ffibuilder = FFI()
