@@ -1,15 +1,17 @@
-import pathlib
+# stdlib
 import warnings
 
+# thirdparty
+import six
+
+# project
 import _libheif_cffi
-from . import constants as _constants
-from . import error as _error
+
+from . import constants as _constants, error as _error
 
 
-class HeifFile:
-    def __init__(
-        self, *, size, data, metadata, color_profile, has_alpha, bit_depth, stride
-    ):
+class HeifFile(object):
+    def __init__(self, size, data, metadata, color_profile, has_alpha, bit_depth, stride):
         self.size = size
         self.data = data
         self.metadata = metadata
@@ -32,29 +34,25 @@ def read_heif(fp, apply_transformations=True):
     return read(fp, apply_transformations=apply_transformations)
 
 
-def read(fp, *, apply_transformations=True, convert_hdr_to_8bit=True):
+def read(fp, apply_transformations=True, convert_hdr_to_8bit=True):
     d = _get_bytes(fp)
     result = _read_heif_bytes(d, apply_transformations, convert_hdr_to_8bit)
     return result
 
 
 def _get_bytes(fp):
-    if isinstance(fp, str):
+    if isinstance(fp, six.text_type):
         with open(fp, "rb") as f:
             d = f.read()
     elif isinstance(fp, bytearray):
         d = bytes(fp)
-    elif isinstance(fp, pathlib.Path):
-        d = fp.read_bytes()
     elif hasattr(fp, "read"):
         d = fp.read()
     else:
         d = fp
 
-    if not isinstance(d, bytes):
-        raise ValueError(
-            "Input must be file name, bytes, byte array, path or file-like object"
-        )
+    if not isinstance(d, six.binary_type):
+        raise ValueError("Input must be file name, bytes, byte array, path or file-like object")
 
     return d
 
@@ -76,9 +74,7 @@ def _read_heif_bytes(d, apply_transformations, convert_hdr_to_8bit):
 
 
 def _read_heif_context(ctx, d, apply_transformations, convert_hdr_to_8bit):
-    error = _libheif_cffi.lib.heif_context_read_from_memory_without_copy(
-        ctx, d, len(d), _libheif_cffi.ffi.NULL
-    )
+    error = _libheif_cffi.lib.heif_context_read_from_memory_without_copy(ctx, d, len(d), _libheif_cffi.ffi.NULL)
     if error.code != 0:
         raise _error.HeifError(
             code=error.code,
@@ -128,7 +124,11 @@ def _read_heif_handle(handle, apply_transformations, convert_hdr_to_8bit):
 
     p_img = _libheif_cffi.ffi.new("struct heif_image **")
     error = _libheif_cffi.lib.heif_decode_image(
-        handle, p_img, colorspace, chroma, p_options,
+        handle,
+        p_img,
+        colorspace,
+        chroma,
+        p_options,
     )
     _libheif_cffi.lib.heif_decoding_options_free(p_options)
     if error.code != 0:
@@ -160,9 +160,7 @@ def _read_heif_handle(handle, apply_transformations, convert_hdr_to_8bit):
 
 
 def _read_metadata(handle):
-    block_count = _libheif_cffi.lib.heif_image_handle_get_number_of_metadata_blocks(
-        handle, _libheif_cffi.ffi.NULL
-    )
+    block_count = _libheif_cffi.lib.heif_image_handle_get_number_of_metadata_blocks(handle, _libheif_cffi.ffi.NULL)
     if block_count == 0:
         return
 
@@ -172,13 +170,9 @@ def _read_metadata(handle):
         handle, _libheif_cffi.ffi.NULL, ids, block_count
     )
     for i in range(len(ids)):
-        metadata_type = _libheif_cffi.lib.heif_image_handle_get_metadata_type(
-            handle, ids[i]
-        )
+        metadata_type = _libheif_cffi.lib.heif_image_handle_get_metadata_type(handle, ids[i])
         metadata_type = _libheif_cffi.ffi.string(metadata_type).decode()
-        data_length = _libheif_cffi.lib.heif_image_handle_get_metadata_size(
-            handle, ids[i]
-        )
+        data_length = _libheif_cffi.lib.heif_image_handle_get_metadata_size(handle, ids[i])
         p_data = _libheif_cffi.ffi.new("char[]", data_length)
         error = _libheif_cffi.lib.heif_image_handle_get_metadata(handle, ids[i], p_data)
         if error.code != 0:
@@ -227,9 +221,7 @@ def _read_color_profile(handle):
 
 def _read_heif_image(img, height):
     p_stride = _libheif_cffi.ffi.new("int *")
-    p_data = _libheif_cffi.lib.heif_image_get_plane_readonly(
-        img, _constants.heif_channel_interleaved, p_stride
-    )
+    p_data = _libheif_cffi.lib.heif_image_get_plane_readonly(img, _constants.heif_channel_interleaved, p_stride)
     stride = p_stride[0]
 
     data_length = height * stride

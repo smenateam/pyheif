@@ -1,9 +1,14 @@
+# future
+from __future__ import absolute_import, unicode_literals
+
+# stdlib
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath("."))
-
+# project
 import pyheif
+
+sys.path.insert(0, os.path.abspath("."))
 
 
 def test_libheif_version():

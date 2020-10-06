@@ -1,5 +1,7 @@
+# stdlib
 import os
 
+# project
 import _libheif_cffi
 
 from .constants import *

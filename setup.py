@@ -1,4 +1,5 @@
-from setuptools import setup, find_packages
+# thirdparty
+from setuptools import setup
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
@@ -11,7 +12,7 @@ setup(
     version=version,
     packages=["pyheif"],
     package_data={"pyheif": ["data/*"]},
-    install_requires=["cffi>=1.0.0"],
+    install_requires=["cffi>=1.0.0", "six>=1.15.0"],
     setup_requires=["cffi>=1.0.0"],
     cffi_modules=["libheif/libheif_build.py:ffibuilder"],
     author="David Poirier",

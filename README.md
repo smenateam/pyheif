@@ -1,5 +1,5 @@
 # pyheif
-Python 3.6+ interface to [libheif](https://github.com/strukturag/libheif) library using CFFI
+Python 2.7+ interface to [libheif](https://github.com/strukturag/libheif) library using CFFI
 
 *Note*: currently only reading is supported.
 
