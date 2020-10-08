@@ -17,8 +17,6 @@ def test_libheif_version():
 
 
 def test_pyheif_version():
-    with open("pyheif/data/version.txt") as f:
-        expected_version = f.read().strip()
-
+    expected_version = "0.5.1"
     version = pyheif.__version__
     assert expected_version == version

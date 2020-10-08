@@ -4,14 +4,10 @@ from setuptools import setup
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-with open("pyheif/data/version.txt") as f:
-    version = f.read().strip()
-
 setup(
     name="pyheif",
-    version=version,
+    version="0.5.1",
     packages=["pyheif"],
-    package_data={"pyheif": ["data/*"]},
     install_requires=["cffi>=1.0.0", "six>=1.15.0"],
     setup_requires=["cffi>=1.0.0"],
     cffi_modules=["libheif/libheif_build.py:ffibuilder"],
@@ -28,5 +24,5 @@ setup(
         "Operating System :: POSIX :: Linux",
     ],
     keywords="heif heic",
-    url="https://github.com/david-poirier-csn/pyheif",
+    url="https://github.com/smenateam/pyheif",
 )
